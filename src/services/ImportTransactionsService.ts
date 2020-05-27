@@ -1,4 +1,4 @@
-import csv from 'csv-parser';
+import csvParse from 'csv-parse';
 import fs from 'fs';
 import path from 'path';
 import { getRepository, In } from 'typeorm';
@@ -38,16 +38,21 @@ class ImportTransactionsService {
     const inputTransactions: InputTransaction[] = [];
 
     const input = fs.createReadStream(csvPath);
-    const csvReading = input.pipe(csv());
+
+    const parsers = csvParse({
+      from_line: 2,
+    });
+
+    const csvReading = input.pipe(parsers);
 
     csvReading.on('data', async row => {
-      const rowt = {
-        title: row.title.trim(),
-        type: row.type.trim(),
-        value: row.value.trim(),
-        category: row.category.trim(),
-      };
-      inputTransactions.push(rowt);
+      const [title, type, value, category] = row.map((cell: string) =>
+        cell.trim(),
+      );
+
+      if (!title || !type || !value) return;
+
+      inputTransactions.push({ title, type, value, category });
     });
 
     await new Promise(resolve => csvReading.on('end', resolve));
