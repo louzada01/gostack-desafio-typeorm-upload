@@ -22,7 +22,7 @@
     "pg": "^8.0.2",
     "reflect-metadata": "^0.1.13",
     "tsconfig": "^7.0.0",
-    "typeorm": "^0.2.24",
+    "typeorm": "^0.2.25",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
